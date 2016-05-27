@@ -1,7 +1,7 @@
 # EBA Unattended Ubuntu Install
-Create a custom Ubuntu installation image for an unattended install for EBA.
-I have tested with with Ubuntu 14.04.1
+Create a custom Ubuntu installation image for an unattended install for EBA. I have tested with with Ubuntu 14.04.1
 
+See also: [EBA Setup Scripts](https://github.com/HarlemSquirrel/eba-setup-scripts)
 
 # Setting up the environment
 
