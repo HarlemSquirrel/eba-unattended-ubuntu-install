@@ -1,0 +1,150 @@
+#### Custom Preseed for EBA
+### by Kevin McCormack 
+### Ubuntu/Edubuntu 14.04
+##################################################################################
+
+
+
+### General
+###################
+
+# Preseed empty to avoid the summary page
+ubiquity ubiquity/summary string empty
+# reboot automatically, add 'noprompt' to the kernel command line
+ubiquity ubiquity/reboot boolean true
+
+
+
+### Localization
+####################
+# Preseeding only locale sets language, country and locale.
+d-i debian-installer/locale string en_US
+
+# Keyboard selection
+# Disable automatic (interactive) keymap detection.
+d-i console-setup/ask_detect boolean false
+d-i keyboard-configuration/xkb-keymap select us
+
+ubiquity languagechooser/language-name select English
+ubiquity countrychooser/shortlist select US
+ubiquity localechooser/supported-locales en_US.UTF-8 es_DO.UTF-8 es_HN.UTF-8 es_MX.UTF-8 es_PR.UTF-8 es_ES.UTF-8 es_US.UTF-8
+ubiquity console-keymaps-at/keymap select us
+
+
+### Network configuration
+#############################
+
+d-i netcfg/enable boolean true
+d-i netcfg/choose_interface select auto
+d-i hw-detect/load_firmware boolean true
+
+### Mirror settings
+# If you select ftp, the mirror/country string does not need to be set.
+#d-i mirror/protocol string ftp
+#d-i mirror/country string manual
+#d-i mirror/http/hostname string http.us.debian.org
+#d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string http://proxy:8002/
+
+
+
+### Account setup
+####################
+
+# To create a normal user account.
+d-i passwd/user-fullname string EBA Tech
+d-i passwd/username string eba
+d-i passwd/user-password-crypted password $1$jofdV3Qt$MhQLCV8ollmdpIazbibYZ/
+
+### Clock and time zone setup
+# Controls whether or not the hardware clock is set to UTC.
+d-i clock-setup/utc boolean true
+
+# You may set this to any valid setting for $TZ; see the contents of
+# /usr/share/zoneinfo/ for valid values.
+d-i time/zone string US/Eastern
+
+# Controls whether to use NTP to set the clock during the install
+d-i clock-setup/ntp boolean true
+# NTP server to use. The default is almost always fine here.
+#d-i clock-setup/ntp-server string ntp.example.com
+
+
+
+### Partitioning
+#####################
+d-i partman-auto/disk string /dev/sda
+d-i partman-auto/method string regular
+
+# LVM
+#d-i partman-auto/method string lvm
+#d-i partman-lvm/device_remove_lvm boolean true
+#d-i partman-md/device_remove_md boolean true
+#d-i partman-lvm/confirm boolean true
+#d-i partman-lvm/confirm_nooverwrite boolean true
+
+# You can choose one of the three predefined partitioning recipes:
+# - atomic: all files in one partition
+# - home:   separate /home partition
+# - multi:  separate /home, /var, and /tmp partitions
+d-i partman-auto/choose_recipe select atomic
+
+# This makes partman automatically partition without confirmation, provided
+# that you told it what to do using one of the methods above.
+d-i partman-partitioning/confirm_write_new_label boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+
+
+
+### Base system installation
+################################
+
+### Apt setup
+# You can choose to install restricted and universe software, or to install
+# software from the backports repository.
+d-i apt-setup/backports boolean true
+d-i apt-setup/extras boolean true
+d-i apt-setup/multiverse boolean true
+d-i apt-setup/partner boolean true
+d-i apt-setup/restricted boolean true
+d-i apt-setup/universe boolean true
+
+# Use non-free packages
+ubiquity ubiquity/use_nonfree boolean true
+
+# Policy for applying updates. May be "none" (no automatic updates),
+# "unattended-upgrades" (install security updates automatically), or
+# "landscape" (manage system with Landscape).
+d-i pkgsel/update-policy select unattended-upgrades
+
+### Boot loader installation
+# This is fairly safe to set, it makes grub install automatically to the MBR
+# if no other operating system is detected on the machine.
+d-i grub-installer/only_debian boolean true
+
+
+
+### More Fun!
+#############################
+
+# Install SSH, copy over scripts, set hostname, possibly install wifi drivers
+ubiquity ubiquity/success_command string \
+in-target apt-get -y install openssh-server; \
+mkdir -p /target/home/eba; \
+cp /cdrom/preseed/*.sh /target/home/eba/; \
+in-target chown eba:eba /home/eba/eba-setup.sh; \
+in-target chown eba:eba /home/eba/eba-setup-netrun.sh; \
+in-target chown eba:eba /home/eba/pupil-setup.sh; \
+in-target chown eba:eba /home/eba/set-hostname.sh; \
+in-target chmod ug+rwx /home/eba/eba-setup-netrun.sh; \
+in-target chmod ug+rwx /home/eba/set-hostname.sh; \
+in-target chmod ug+rw /home/eba/pupil-setup.sh; \
+in-target chmod +x /home/eba/pupil-setup.sh; \
+in-target bash /home/eba/eba-setup.sh; \
+in-target rm /home/eba/eba-setup.sh; \
+in-target bash /home/eba/set-hostname.sh; \
+if (lspci -d 14e4:4315); then \
+	in-target apt-get -y install firmware-b43-installer; \
+fi;
