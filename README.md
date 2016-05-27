@@ -1,26 +1,29 @@
 # eba-unattended-ubuntu-install
 Custom config files for an unattended Ubuntu install for EBA
 
-### source 
-## http://askubuntu.com/questions/122505/how-do-i-create-a-completely-unattended-install-of-ubuntu
-## http://askubuntu.com/questions/48535/how-to-customize-the-ubuntu-live-cd
-## https://help.ubuntu.com/community/LiveCDCustomization
+
 
 # Download your ISO then ...
-# install needed software
+### Install needed software
+```sh
 sudo apt-get install squashfs-tools dchroot
+```
 
-# Mount the Live CD
+### Mount the Live CD
+```sh
 mkdir /tmp/livecd
 sudo mount -o loop ~/Downloads/ubuntu.iso /tmp/livecd
+```
 
-# create a working area and copy contents over to the working area
+### Create a working area and copy contents over to the working area
+```sh
 mkdir -p ~/livecd/cd
 rsync --exclude=/casper/filesystem.squashfs -a /tmp/livecd/ ~/livecd/cd
 mkdir ~/livecd/squashfs  ~/livecd/custom
 sudo modprobe squashfs
 sudo mount -t squashfs -o loop /tmp/livecd/casper/filesystem.squashfs ~/livecd/squashfs/
 sudo cp -a ~/livecd/squashfs/* ~/livecd/custom
+```
 
 # Get into the folder
 # 64-bit
@@ -152,3 +155,9 @@ cd ./cd && sudo mkisofs -U -A "Edu14x64-EBA-Auto" -V "Edu14x64-EBA-Auto" -volset
 ### Install with UNetBootin 608-1 or
 # with Ubuntu Startup Disc Creator
 sudo usb-creator-gtk
+
+
+# Sources
+http://askubuntu.com/questions/122505/how-do-i-create-a-completely-unattended-install-of-ubuntu
+http://askubuntu.com/questions/48535/how-to-customize-the-ubuntu-live-cd
+https://help.ubuntu.com/community/LiveCDCustomization
