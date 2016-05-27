@@ -1,5 +1,5 @@
-# eba-unattended-ubuntu-install
-Custom config files for an unattended Ubuntu install for EBA
+# EBA Unattended Ubuntu Install
+Create a custom Ubuntu installation image for an unattended install for EBA
 
 
 # Setting up the environment
