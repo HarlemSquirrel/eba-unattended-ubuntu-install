@@ -1,5 +1,6 @@
 # EBA Unattended Ubuntu Install
-Create a custom Ubuntu installation image for an unattended install for EBA
+Create a custom Ubuntu installation image for an unattended install for EBA.
+I have tested with with Ubuntu 14.04.1
 
 
 # Setting up the environment
@@ -51,7 +52,7 @@ mount -t proc none /proc/ && mount -t sysfs none /sys/ && mount -t devpts none /
 ```
 
 
-# Customize!!
+# Customize
 
 ### add sources to /etc/apt/sources.list
 ```sh
@@ -111,12 +112,13 @@ sed -i "s/enabled=1/enabled=0/g" /etc/default/apport
 apt-get purge unity-scope-imdb unity-scope-musicstores unity-scope-zotero unity-scope-click-autopilot unity-scope-deviantart unity-scope-gallica unity-scope-gdocs unity-scope-github unity-scope-googlenews unity-scope-launchpad unity-scope-mediascanner unity-scope-onlinemusic unity-scope-openweathermap unity-scope-soundcloud unity-scope-sshsearch unity-scope-yahoostock unity-lens-photos unity-lens-video unity-scope-audacious unity-scope-chromiumbookmarks unity-scope-clementine unity-scope-click unity-scope-colourlovers unity-scope-gdrive unity-scope-gmusicbrowser unity-scope-gourmet unity-scope-guayadeque unity-scope-mediascanner2 unity-scope-musique unity-scope-openclipart unity-scope-texdoc unity-scope-tomboy unity-scope-video-remote unity-scope-virtualbox unity-scope-yelp unity-webapps-service account-plugin-ubuntuone ubuntu-purchase-service deja-dup indicator-messages empathy gwibber thunderbird transmission-gtk pidgin unity-control-center-signon landscape-* webbrowser-app;
 ```
 
-### update system packages
+### Update system packages
 ```sh
 apt-get dist-upgrade
 ```
 
-#### cleanup
+#### Cleanup
+Run this after you are happy with the customizations.
 ```sh
 apt-get autoremove && apt-get clean && rm -rf /tmp/* && rm -f /var/lib/dbus/machine-id
 umount /proc/ && umount -l /sys/ && umount /dev/pts && exit
@@ -133,7 +135,7 @@ sudo cp ./cd/casper/filesystem.manifest ./cd/casper/filesystem.manifest-desktop
 ```
 
 
-### regenerate squashfs file, remove first
+### Regenerate squashfs file, remove first
 ```sh
 sudo rm -f ./cd/casper/filesystem.squashfs && sudo mksquashfs custom ./cd/casper/filesystem.squashfs -comp xz
 ```
@@ -144,7 +146,8 @@ sudo rm -f ./cd/casper/filesystem.squashfs && sudo mksquashfs custom ./cd/casper
 sudo su -c 'printf $(du -sx --block-size=1 ./custom | cut -f1) > ./cd/casper/filesystem.size'
 ```
 
-### Set the boot command line to use preseed files, change the first line and insert an auto-install
+### Edit `txt.cfg`
+Set the boot command line to use preseed files, change the first line and insert an auto-install
 ```sh
 sudo nano ./cd/isolinux/txt.cfg
 ```
@@ -156,7 +159,7 @@ label unattended-EBA-install
   append  file=/cdrom/preseed/EBA.seed keyboard-configuration/layoutcode=us and console-setup/ask_detect=false boot=casper automatic-ubiquity noprompt initrd=/casper/initrd.lz --
 ```
 
-### Set the efi boot to use preseed and auto-install (64-bit only)
+### Set the EFI boot to use preseed and auto-install (64-bit only)
 ```sh
 sudo nano ./cd/boot/grub/grub.cfg
 ```
