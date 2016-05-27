@@ -189,6 +189,7 @@ define DISKNAME  Ubuntu 14.04.1 LTS amd64 for EBA by KMack
 
 
 ### Copy preseed file and scripts to preseed folder
+The `EBA.seed` file is included in this repository. The other files can be found in my [EBA Setup Scripts](https://github.com/HarlemSquirrel/eba-setup-scripts) repository.
 ```sh
 sudo cp ~/Dropbox/Scripts/{unattended-install/EBA.seed,eba-setup-netrun.sh,eba-setup.sh,loaner-setup.sh,set-hostname.sh,ProxyEBA.sh,pupil-setup.sh,configs/10-network-manager.pkla} ./cd/preseed/
 ```
